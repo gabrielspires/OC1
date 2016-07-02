@@ -14,9 +14,5 @@ mux: testbench_Multiplexador.v
 	gtkwave testbench_Multiplexador.vcd
 
 clean:
-	rm counter.out
-	rm testbench_Contador.vcd
-	rm ula.out
-	rm testbench_ULA.vcd
-	rm mux.out
-	rm testbench_Multiplexador.vcd
+	rm *.out
+	rm *.vcd

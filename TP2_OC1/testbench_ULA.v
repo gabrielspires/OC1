@@ -7,14 +7,13 @@ module testbench_ULA;
 	reg [0:15]Ry;
 
 	wire [0:15]result;
-	wire zero;
 
 	always #1 clock = !clock;
 
 	initial $dumpfile("testbench_ULA.vcd");
 	initial $dumpvars(0, testbench_ULA);
 
-	ULA ula(A, Ry, OpSelect, zero, result);
+	ULA ula(A, Ry, OpSelect, result);
 
 	initial begin
 		#1; //add -> 2+1 = 3
