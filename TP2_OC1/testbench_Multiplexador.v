@@ -3,8 +3,8 @@
 module testbench_Multiplexador;
 	reg Rselect, Iselect;
 	reg[15:0] r0, r1, r2, r3, r4, r5, r6, r7, signExt, regR;
-	reg[4:0] regNumSelect;
-	wire[15:0] out;
+	reg[2:0] regNumSelect;
+	wire[15:0]out;
 
 	initial $dumpfile("testbench_Multiplexador.vcd");
 	initial $dumpvars(0, testbench_Multiplexador);

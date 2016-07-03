@@ -4,7 +4,7 @@ module Multiplexador(r0, r1, r2, r3, r4, r5, r6, r7,
 	
 	input Rselect, Iselect;
 	input[15:0] r0, r1, r2, r3, r4, r5, r6, r7, signExt, regR;
-	input[4:0] regNumSelect;
+	input[2:0] regNumSelect;
 	output[15:0] out;
 	
 	reg[15:0] aux;

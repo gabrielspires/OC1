@@ -1,3 +1,11 @@
+#Makefile para facilitar o teste de cada módulo
+#Comandos para compilar e rodar os módulos:
+#	make counter
+#	make ula
+#	make mux
+#	make control
+#	make processador
+
 counter: testbench_Contador.v
 	iverilog -o counter.out testbench_Contador.v
 	vvp counter.out
@@ -17,6 +25,11 @@ control: testbench_UnidadeDeControle.v
 	iverilog -o control.out testbench_UnidadeDeControle.v
 	vvp control.out
 	gtkwave testbench_UnidadeDeControle.vcd
+
+processador: testbench_processor.v
+	iverilog -o processor.out testbench_processor.v
+	vvp processor.out
+	gtkwave testbench_processor.vcd
 
 clean:
 	rm *.out
