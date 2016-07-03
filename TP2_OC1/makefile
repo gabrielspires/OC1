@@ -13,6 +13,11 @@ mux: testbench_Multiplexador.v
 	vvp mux.out
 	gtkwave testbench_Multiplexador.vcd
 
+control: testbench_UnidadeDeControle.v
+	iverilog -o control.out testbench_UnidadeDeControle.v
+	vvp control.out
+	gtkwave testbench_UnidadeDeControle.vcd
+
 clean:
 	rm *.out
 	rm *.vcd

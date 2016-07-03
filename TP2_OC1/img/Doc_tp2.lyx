@@ -1,0 +1,404 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\date{}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman times
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 3cm
+\rightmargin 2.5cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+TP2 - Organização de Computadores 1
+\end_layout
+
+\begin_layout Author
+Gabriel Henrique Souto Pires {gabrielpires@dcc.ufmg.br}
+\begin_inset Newline newline
+\end_inset
+
+Pedro Ribeiro Mariano {pedrorm@dcc.ufmg.br}
+\end_layout
+
+\begin_layout Section
+Contador
+\end_layout
+
+\begin_layout Standard
+O módulo do contador tem duas entradas que são o clock e o sinal de clear
+ e tem uma saída que é o número do ciclo atual.
+ A cada borda de subida do clock o contador é atualizado e é testado se
+ o sinal de clear é igual a 1, se sim o contador é zerado, do contrário
+ soma-se 1 à saída anterior.
+ A saída produzida pelo testbench usado pode ser vista abaixo.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename contador.png
+	width 75page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Saída produzida pelo GTKWave a partir do testbench utilizado
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Extensor de sinal
+\end_layout
+
+\begin_layout Standard
+O extensor de sinal (Sign extend) é utilizado quando alguma instrução que
+ utiliza o imediato é carregada.
+ Nesse módulo os 6 primeiros bits da instrução (que correspondem ao opcode
+ e ao registrador) são removidos para que apenas os bits referentes ao imediato
+ sejam utilizados no ciclo em que ele é carregado no registrador.
+ O módulo do extensor de sinal tem uma entrada que corresponde aos 16 bits
+ da instrução, e uma saída que contém apenas os 10 últimos bits que nos
+ interessam.
+ Para remover os bits irrelevantes usamos um registrador para guardar a
+ instrução, em seguida zeramos um a um os 6 bits iniciais e então jogamos
+ o conteúdo do registrador na saída do extensor.
+ Dessa forma, uma instrução que entra da forma 
+\family sans
+1010010000001010
+\family default
+ sai na forma 
+\family sans
+0000000000001010
+\family default
+.
+ Um teste do extensor de sinal pode ser visto abaixo.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename extensordesinal.png
+	width 75page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Teste do extensor de sinal
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Unidade de controle
+\end_layout
+
+\begin_layout Standard
+O módulo da Unidade de controle controla o que cada ciclo do caminho de
+ dados processa de acordo com o contador que serve exatamente para contar
+ em que ciclo a instrução está sendo executada.
+ A unidade de controle também decide o que será selecionado no multiplexador,
+ quando resetar o contador, quais registradores estarão habilitados para
+ escrita e qual a operação será executada pela ULA, ou seja, todo o processament
+o da instrução.
+\end_layout
+
+\begin_layout Standard
+O módulo recebe como entrada a instrução, a saída do contador, o clock e
+ o Resetn que é um sinal externo assim como a instrução e suas saídas são
+ o enable de cada registrador, o select do registrador R que guarda a saída
+ da ULA, o select de Imediato, o select dos registradores usados na instrução
+ o opcode usado na ULA e o clear que vai para o contador.
+ Em toda borda de descida do clock é verificado se o sinal de Resetn está
+ ativo para acionar o Clear e resetar o contador, uma vez que o contador
+ é atualizado na borda de subida.
+ Sempre que o contador é atualizado, é verificado em qual ciclo ele está
+ sendo 4 ciclos numerados de 0 a 3.
+ Em cada ciclo é executado uma parte específica da instrução.
+ No primeiro ciclo o opcode é separado da instrução fica à disposão da ULA,
+ assim saberemos quantos registradores usar e o que fazer com o resto da
+ instrução.
+ No segundo ciclo o primeiro operando é carregado e selecionado no multiplexador
+, o Registrador A que vai na entrada da esquerda da ULA também é habilitado
+ para escrita.
+ No terceiro ciclo o segundo operando é selecionado se for necessário ou
+ então um sinal de select é enviado ao multiplexador caso o imediato seja
+ utilizado em seguida como no caso de um load immediate.
+ No último ciclo o registrador A e R são desabilitados assim como o select
+ do imediato já que eles não serão mais utilizados.
+ O registrador destino então recebe o sinal de enable para que os dados
+ possam ser gravados nele.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename controle.png
+	width 75page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Teste da Unidade de controle
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Multiplexador
+\end_layout
+
+\begin_layout Standard
+No multiplexador são selecionados os sinais que serão usados no processador.
+ Nele entram os dados de todos os registradores, assim como o sign extend
+ e os seletores vindos da unidade de controle que escolhem a entrada correta
+ a ser passada adiante em sua saída.
+ A saída do multiplexador será apenas um valor por ciclo, por esse motivo
+ os registradores são lidos um a um e não todos no mesmo ciclo.
+ Como pode ser visto no teste abaixo, quando o regNumSelect manda no sinal
+ o número do registrador a ser lido, os dados contidos nele são passados
+ pela saida out do multiplexador, o mesmo acontece com o registrador R (regR)
+ e com o sign extend (signExt) que são passados quando os seus respectivos
+ selects estão ativos com o valor 1.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename multiplexador.png
+	width 75page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Teste do multiplexador
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+ULA
+\end_layout
+
+\begin_layout Standard
+Na ULA a operação passada pela instrução é executada.
+ As entradas são dois registradores e o Opcode passado pela unidade de controle
+ e a saída é o resultado de tal operação.
+ No caso de o Opcode ser por exempo 
+\family sans
+000
+\family default
+, a operação será uma adição e os registradores da esquerda e direita serão
+ somados, o resultado vai da saída da ULA para o registrador R onde é armazenado.
+ Um teste da ULA pode ser visto abaixo.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ula.png
+	width 75page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Teste da ULA no GTKWave
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
